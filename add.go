@@ -1,3 +1,3 @@
-package cmd
+package main
 
 func AddCmd(args []string) {}

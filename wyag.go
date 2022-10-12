@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"wyag/cmd"
 )
 
 func main() {
@@ -32,46 +31,46 @@ func main() {
 	switch os.Args[1] {
 	case "add":
 		addCmd.Parse(os.Args[2:])
-		cmd.AddCmd(addCmd.Args())
+		AddCmd(addCmd.Args())
 	case "cat-file":
 		catFileCmd.Parse(os.Args[2:])
-		cmd.CatFileCmd()
+		CatFileCmd()
 	case "checkout":
 		checkoutCmd.Parse(os.Args[2:])
-		cmd.CheckoutCmd()
+		CheckoutCmd()
 	case "commit":
 		commitCmd.Parse(os.Args[2:])
-		cmd.CommitCmd()
+		CommitCmd()
 	case "hash-object":
 		hashObjectCmd.Parse(os.Args[2:])
-		cmd.HashObjectCmd()
+		HashObjectCmd()
 	case "init":
 		initCmd.Parse(os.Args[2:])
-		cmd.InitCmd()
+		InitCmd()
 	case "log":
 		logCmd.Parse(os.Args[2:])
-		cmd.LogCmd()
+		LogCmd()
 	case "ls-tree":
 		lsTreeCmd.Parse(os.Args[2:])
-		cmd.LsTreeCmd()
+		LsTreeCmd()
 	case "merge":
 		mergeCmd.Parse(os.Args[2:])
-		cmd.MergeCmd()
+		MergeCmd()
 	case "rebase":
 		rebaseCmd.Parse(os.Args[2:])
-		cmd.RebaseCmd()
+		RebaseCmd()
 	case "rev-parse":
 		revParseCmd.Parse(os.Args[2:])
-		cmd.RebaseCmd()
+		RebaseCmd()
 	case "rm":
 		rmCmd.Parse(os.Args[2:])
-		cmd.RmCmd()
+		RmCmd()
 	case "show-ref":
 		showRefCmd.Parse(os.Args[2:])
-		cmd.ShowRefCmd()
+		ShowRefCmd()
 	case "tag":
 		tagCmd.Parse(os.Args[2:])
-		cmd.TagCmd()
+		TagCmd()
 	default:
 		fmt.Println("Invalid sub-commands")
 		fmt.Println("[Insert help message here]")
