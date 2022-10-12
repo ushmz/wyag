@@ -28,6 +28,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	flag.Parse()
+
 	switch os.Args[1] {
 	case "add":
 		addCmd.Parse(os.Args[2:])
@@ -46,7 +48,7 @@ func main() {
 		HashObjectCmd()
 	case "init":
 		initCmd.Parse(os.Args[2:])
-		InitCmd()
+		InitCmd(flag.Arg(1))
 	case "log":
 		logCmd.Parse(os.Args[2:])
 		LogCmd()
