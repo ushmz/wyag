@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io/fs"
 	"os"
@@ -100,4 +101,27 @@ func ensureRepositoryDirPath(repo *Repository, mkdir bool, path ...string) (stri
 	} else {
 		return "", nil
 	}
+}
+
+func FindRepository(path string) (*Repository, error) {
+	p, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		return nil, err
+	}
+
+	info, err := os.Stat(filepath.Join(p, ".git"))
+	if err != nil {
+		return nil, err
+	}
+
+	if info.IsDir() {
+		return NewRepository(p, false)
+	}
+
+	parent := filepath.Join(p, "..")
+	if p == parent {
+		return nil, errors.New("No git repository")
+	}
+
+	return FindRepository(parent)
 }
