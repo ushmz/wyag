@@ -12,7 +12,10 @@ func main() {
 	checkoutCmd := flag.NewFlagSet("checkout", flag.ExitOnError)
 	commitCmd := flag.NewFlagSet("commit", flag.ExitOnError)
 	hashObjectCmd := flag.NewFlagSet("hash-object", flag.ExitOnError)
+
 	initCmd := flag.NewFlagSet("init", flag.ExitOnError)
+	initCmd.Usage = printInitUsage
+
 	logCmd := flag.NewFlagSet("log", flag.ExitOnError)
 	lsTreeCmd := flag.NewFlagSet("ls-tree", flag.ExitOnError)
 	mergeCmd := flag.NewFlagSet("merge", flag.ExitOnError)
@@ -48,7 +51,7 @@ func main() {
 		HashObjectCmd()
 	case "init":
 		initCmd.Parse(os.Args[2:])
-		InitCmd(flag.Arg(1))
+		InitCmd(flag.Arg(len(flag.Args())))
 	case "log":
 		logCmd.Parse(os.Args[2:])
 		LogCmd()

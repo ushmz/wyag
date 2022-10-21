@@ -22,9 +22,6 @@ func createRepository(path string) (*Repository, error) {
 		return nil, err
 	}
 
-	// First, we make sure the path either doesn't exist
-	// or is an empty directory.
-
 	if info, err := os.Stat(repo.WorkTree); err != nil {
 		os.Mkdir(repo.WorkTree, os.ModePerm)
 	} else {
