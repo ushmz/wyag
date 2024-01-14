@@ -4,22 +4,20 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"wyag/cmd"
 )
 
 func main() {
 	addCmd := flag.NewFlagSet("add", flag.ExitOnError)
 	catFileCmd := flag.NewFlagSet("cat-file", flag.ExitOnError)
-	catFileCmd.Usage = printCatFileUsage
+	catFileCmd.Usage = cmd.PrintCatFileUsage
 	checkoutCmd := flag.NewFlagSet("checkout", flag.ExitOnError)
 	commitCmd := flag.NewFlagSet("commit", flag.ExitOnError)
 	hashObjectCmd := flag.NewFlagSet("hash-object", flag.ExitOnError)
-	hashObjectCmd.Usage = pringHashObjectHelp
+	hashObjectCmd.Usage = cmd.PringHashObjectHelp
 	objectTypeFlag := hashObjectCmd.String("t", "blob", "Specify the type")
 	writeFlag := hashObjectCmd.Bool("w", false, "Actually write the object into the database")
-
 	initCmd := flag.NewFlagSet("init", flag.ExitOnError)
-	// initCmd.Usage = printInitUsage
-
 	logCmd := flag.NewFlagSet("log", flag.ExitOnError)
 	lsTreeCmd := flag.NewFlagSet("ls-tree", flag.ExitOnError)
 	mergeCmd := flag.NewFlagSet("merge", flag.ExitOnError)
@@ -31,7 +29,6 @@ func main() {
 
 	if len(os.Args) < 2 {
 		fmt.Println("Expected sub-commands")
-		fmt.Println("[Insert help message here]")
 		os.Exit(1)
 	}
 
@@ -40,49 +37,60 @@ func main() {
 	switch os.Args[1] {
 	case "add":
 		addCmd.Parse(os.Args[2:])
-		AddCmd(addCmd.Args())
+		cmd.AddCmd(addCmd.Args())
 	case "cat-file":
 		catFileCmd.Parse(os.Args[2:])
-		CatFileCmd(catFileCmd.Arg(0), catFileCmd.Arg(1))
+		if catFileCmd.NArg() < 2 {
+			catFileCmd.Usage()
+			os.Exit(1)
+		}
+		cmd.CatFileCmd(catFileCmd.Arg(0), catFileCmd.Arg(1))
 	case "checkout":
 		checkoutCmd.Parse(os.Args[2:])
-		CheckoutCmd()
+		cmd.CheckoutCmd()
 	case "commit":
 		commitCmd.Parse(os.Args[2:])
-		CommitCmd()
+		cmd.CommitCmd()
 	case "hash-object":
 		hashObjectCmd.Parse(os.Args[2:])
-		HashObjectCmd(objectTypeFlag, writeFlag, hashObjectCmd.Arg(0))
+		if hashObjectCmd.NArg() < 1 {
+			hashObjectCmd.Usage()
+			os.Exit(1)
+		}
+		cmd.HashObjectCmd(objectTypeFlag, writeFlag, hashObjectCmd.Arg(0))
 	case "init":
 		initCmd.Parse(os.Args[2:])
-		InitCmd(flag.Arg(len(flag.Args())))
+		if initCmd.NArg() < 1 {
+			initCmd.Usage()
+			os.Exit(1)
+		}
+		cmd.InitCmd(flag.Arg(0))
 	case "log":
 		logCmd.Parse(os.Args[2:])
-		LogCmd()
+		cmd.LogCmd()
 	case "ls-tree":
 		lsTreeCmd.Parse(os.Args[2:])
-		LsTreeCmd()
+		cmd.LsTreeCmd()
 	case "merge":
 		mergeCmd.Parse(os.Args[2:])
-		MergeCmd()
+		cmd.MergeCmd()
 	case "rebase":
 		rebaseCmd.Parse(os.Args[2:])
-		RebaseCmd()
+		cmd.RebaseCmd()
 	case "rev-parse":
 		revParseCmd.Parse(os.Args[2:])
-		RebaseCmd()
+		cmd.RebaseCmd()
 	case "rm":
 		rmCmd.Parse(os.Args[2:])
-		RmCmd()
+		cmd.RmCmd()
 	case "show-ref":
 		showRefCmd.Parse(os.Args[2:])
-		ShowRefCmd()
+		cmd.ShowRefCmd()
 	case "tag":
 		tagCmd.Parse(os.Args[2:])
-		TagCmd()
+		cmd.TagCmd()
 	default:
 		fmt.Println("Invalid sub-commands")
-		fmt.Println("[Insert help message here]")
 		os.Exit(1)
 	}
 }
