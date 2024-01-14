@@ -14,6 +14,7 @@ var (
 	ErrFailToReadFile        = errors.New("Failed to read file")
 	ErrFailToCreateDirectory = errors.New("Failed to create directory")
 	ErrFailToCreateFile      = errors.New("Failed to create file")
+	ErrMalformedObject       = errors.New("Malformed object")
 
 	ErrUnsupportedRepositoryFormatVersion = errors.New("Unsupported repositoryformatversion")
 )

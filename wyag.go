@@ -9,12 +9,13 @@ import (
 func main() {
 	addCmd := flag.NewFlagSet("add", flag.ExitOnError)
 	catFileCmd := flag.NewFlagSet("cat-file", flag.ExitOnError)
+	catFileCmd.Usage = printCatFileUsage
 	checkoutCmd := flag.NewFlagSet("checkout", flag.ExitOnError)
 	commitCmd := flag.NewFlagSet("commit", flag.ExitOnError)
 	hashObjectCmd := flag.NewFlagSet("hash-object", flag.ExitOnError)
 
 	initCmd := flag.NewFlagSet("init", flag.ExitOnError)
-	initCmd.Usage = printInitUsage
+	// initCmd.Usage = printInitUsage
 
 	logCmd := flag.NewFlagSet("log", flag.ExitOnError)
 	lsTreeCmd := flag.NewFlagSet("ls-tree", flag.ExitOnError)
@@ -39,7 +40,7 @@ func main() {
 		AddCmd(addCmd.Args())
 	case "cat-file":
 		catFileCmd.Parse(os.Args[2:])
-		CatFileCmd()
+		CatFileCmd(catFileCmd.Arg(0), catFileCmd.Arg(1))
 	case "checkout":
 		checkoutCmd.Parse(os.Args[2:])
 		CheckoutCmd()
