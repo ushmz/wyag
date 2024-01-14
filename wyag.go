@@ -13,6 +13,9 @@ func main() {
 	checkoutCmd := flag.NewFlagSet("checkout", flag.ExitOnError)
 	commitCmd := flag.NewFlagSet("commit", flag.ExitOnError)
 	hashObjectCmd := flag.NewFlagSet("hash-object", flag.ExitOnError)
+	hashObjectCmd.Usage = pringHashObjectHelp
+	objectTypeFlag := hashObjectCmd.String("t", "blob", "Specify the type")
+	writeFlag := hashObjectCmd.Bool("w", false, "Actually write the object into the database")
 
 	initCmd := flag.NewFlagSet("init", flag.ExitOnError)
 	// initCmd.Usage = printInitUsage
@@ -49,7 +52,7 @@ func main() {
 		CommitCmd()
 	case "hash-object":
 		hashObjectCmd.Parse(os.Args[2:])
-		HashObjectCmd()
+		HashObjectCmd(objectTypeFlag, writeFlag, hashObjectCmd.Arg(0))
 	case "init":
 		initCmd.Parse(os.Args[2:])
 		InitCmd(flag.Arg(len(flag.Args())))
