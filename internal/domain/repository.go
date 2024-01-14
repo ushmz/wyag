@@ -1,4 +1,4 @@
-package main
+package domain
 
 import (
 	"errors"
@@ -6,6 +6,8 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+
+	e "wyag/internal/error"
 
 	"gopkg.in/ini.v1"
 )
@@ -25,71 +27,71 @@ func NewRepository(path string, force bool) (*Repository, error) {
 	if !force {
 		info, err := os.Stat(repo.GitDir)
 		if err != nil {
-			return nil, fmt.Errorf("%w : %s", ErrCannotGetFileStat, repo.GitDir)
+			return nil, fmt.Errorf("%w : %s", e.ErrCannotGetFileStat, repo.GitDir)
 		}
 
 		if !info.IsDir() {
-			return nil, fmt.Errorf("%w : %s", ErrNotGitRepository, path)
+			return nil, fmt.Errorf("%w : %s", e.ErrNotGitRepository, path)
 		}
 	}
 
 	// Read configuration file in .git/config
-	cf := ensureRepositoryFilePath(&repo, false, "config")
+	cf := EnsureRepositoryFilePath(&repo, false, "config")
 
 	if cf != "" {
 		if _, err := os.Stat(cf); err == nil {
 			if f, err := ini.Load(cf); err != nil {
-				return nil, fmt.Errorf("%w : %s", ErrFailToReadFile, cf)
+				return nil, fmt.Errorf("%w : %s", e.ErrFailToReadFile, cf)
 			} else {
 				repo.Config = f
 			}
 		}
 	} else if !force {
-		return nil, fmt.Errorf("%w : %s", ErrNoSuchFile, cf)
+		return nil, fmt.Errorf("%w : %s", e.ErrNoSuchFile, cf)
 	}
 
 	if !force {
 		versKey := repo.Config.Section("core").Key("repositoryformatversion")
 		if vers, err := versKey.Int(); err != nil {
-			return nil, fmt.Errorf("%w : %s", ErrUnsupportedRepositoryFormatVersion, "Cannot read core.repositoryformatversion")
+			return nil, fmt.Errorf("%w : %s", e.ErrUnsupportedRepositoryFormatVersion, "Cannot read core.repositoryformatversion")
 		} else {
 			if vers != 0 {
-				return nil, fmt.Errorf("%w : %d", ErrUnsupportedRepositoryFormatVersion, vers)
+				return nil, fmt.Errorf("%w : %d", e.ErrUnsupportedRepositoryFormatVersion, vers)
 			}
 		}
 	}
 	return &repo, nil
 }
 
-// repositoryFilePath : Compute path under repository's gitdir.
-func repositoryFilePath(repo *Repository, path ...string) string {
+// RepositoryFilePath : Compute path under repository's gitdir.
+func RepositoryFilePath(repo *Repository, path ...string) string {
 	args := append([]string{repo.GitDir}, path...)
 	return filepath.Join(args...)
 }
 
-// ensureRepositoryFilePath : Same as repositoryFilePath, but create dirname(*path) if absent.
+// EnsureRepositoryFilePath : Same as repositoryFilePath, but create dirname(*path) if absent.
 // For example, repo_file(r, "refs", "remotes", "origin", "HEAD")
 // will create .git/refs/remotes/origin.
 // repo: Repository
 // mkdir: If true, make parent directory (like `p` option of mkdir command)
 // path: string array of path
-func ensureRepositoryFilePath(repo *Repository, mkdir bool, path ...string) string {
-	if dir, err := ensureRepositoryDirPath(repo, mkdir, path[:len(path)-1]...); err == nil {
-		return repositoryFilePath(repo, path...)
+func EnsureRepositoryFilePath(repo *Repository, mkdir bool, path ...string) string {
+	if dir, err := EnsureRepositoryDirPath(repo, mkdir, path[:len(path)-1]...); err == nil {
+		return RepositoryFilePath(repo, path...)
 	} else {
 		return dir
 	}
 }
 
-// ensureRepositoryDirPath : Same as repositoryFilePath, but mkdir *path if absent if mkdir == true.
-func ensureRepositoryDirPath(repo *Repository, mkdir bool, path ...string) (string, error) {
-	p := repositoryFilePath(repo, path...)
+// EnsureRepositoryDirPath : Same as repositoryFilePath, but mkdir *path if absent if mkdir == true.
+func EnsureRepositoryDirPath(repo *Repository, mkdir bool, path ...string) (string, error) {
+	p := RepositoryFilePath(repo, path...)
 
 	if info, err := os.Stat(p); err == nil {
 		if info.IsDir() {
 			return p, nil
 		} else {
-			return "", fmt.Errorf("%w : %s", ErrNotDirectory, p)
+			return "", fmt.Errorf("%w : %s", e.ErrNotDirectory, p)
 		}
 	}
 
