@@ -51,11 +51,11 @@ func NewRepository(path string, force bool) (*Repository, error) {
 	if !force {
 		versKey := repo.Config.Section("core").Key("repositoryformatversion")
 		if vers, err := versKey.Int(); err != nil {
+			return nil, fmt.Errorf("%w : %s", ErrUnsupportedRepositoryFormatVersion, "Cannot read core.repositoryformatversion")
+		} else {
 			if vers != 0 {
 				return nil, fmt.Errorf("%w : %d", ErrUnsupportedRepositoryFormatVersion, vers)
 			}
-		} else {
-			return nil, fmt.Errorf("%w : %d", ErrUnsupportedRepositoryFormatVersion, vers)
 		}
 	}
 	return &repo, nil
